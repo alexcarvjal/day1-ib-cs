@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DAY1 · IB Computer Science</title>
+  <meta name="description" content="Daily, bite-sized practice for IB Diploma Computer Science: daily challenges, quick drills, marathons and custom quizzes by topic.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    (function () {
+      var t = 'system';
+      try { t = localStorage.getItem('day1:theme') || 'system'; } catch (e) {}
+      var dark = t === 'dark' || (t === 'system' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Splash -->
+  <section id="screen-splash" class="screen active" aria-label="Loading">
+    <div class="splash">
+      <img class="logo logo-light" src="assets/logo-light.png" alt="DAY1">
+      <img class="logo logo-dark" src="assets/logo-dark.png" alt="DAY1">
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+  </section>
+
+  <!-- Login -->
+  <section id="screen-login" class="screen" aria-label="Sign in">
+    <div class="login">
+      <div class="login-brand">
+        <img class="logo logo-light" src="assets/logo-light.png" alt="DAY1">
+        <img class="logo logo-dark" src="assets/logo-dark.png" alt="DAY1">
+      </div>
+      <div class="login-mascot" data-mascot="happy"></div>
+      <h1 class="login-title">IB Computer Science,<br>one day at a time.</h1>
+      <p class="login-sub">Daily challenges, quick drills and custom quizzes built on the IB Diploma syllabus.</p>
+      <div class="login-actions">
+        <button class="btn btn-google" id="google-btn" type="button">
+          <svg viewBox="0 0 48 48" width="22" height="22" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+          <span>Continue with Google</span>
+        </button>
+        <button class="btn btn-ghost" id="guest-btn" type="button">Continue as guest</button>
+        <p class="login-note" id="login-note">Sign in to keep your streak and progress in sync across devices.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Home -->
+  <section id="screen-home" class="screen" aria-label="Home">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="profile-chip" id="profile-btn" type="button" aria-label="Edit profile">
+          <span class="avatar" id="topbar-avatar"></span>
+          <span class="profile-name" id="topbar-name">Student</span>
+        </button>
+        <div class="streak-chip off" id="streak-chip" title="Day streak">
+          <svg class="flame" viewBox="0 0 24 24" aria-hidden="true"><path class="flame-outer" d="M12.6 1.8c.4 2.9-1.1 4.9-2.7 6.7C8 10.6 6.2 12.6 6.2 15.6a5.8 5.8 0 0 0 11.6 0c0-2.3-1-4.3-2.4-5.9-.2 1.3-.9 2.4-2 3 .5-3.6-.1-7.3-.8-10.9z"/><path class="flame-inner" d="M12.2 12.4c-.3 1.5-1.8 2.4-1.8 4.1a2.3 2.3 0 0 0 4.6 0c0-1.5-1.1-2.6-2.8-4.1z"/></svg>
+          <span id="streak-count">0</span>
+        </div>
+      </div>
+      <a class="brand" href="#" id="brand-link" aria-label="DAY1 home">
+        <img class="logo logo-light" src="assets/logo-light.png" alt="DAY1">
+        <img class="logo logo-dark" src="assets/logo-dark.png" alt="DAY1">
+      </a>
+      <div class="topbar-right">
+        <button class="icon-btn" id="settings-btn" type="button" aria-label="Settings">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="home">
+      <div class="greeting">
+        <h1 id="greeting">Welcome back!</h1>
+        <p id="greeting-sub">Ready for today's practice?</p>
+      </div>
+
+      <article class="daily-card" id="daily-card">
+        <div class="daily-text">
+          <div class="eyebrow"><span>Daily challenge</span><span class="eyebrow-date" id="daily-date"></span></div>
+          <h2 id="daily-title">7 questions. One shot a day.</h2>
+          <p id="daily-desc">Multiple choice from across the syllabus — the same set for everyone today.</p>
+          <div class="daily-actions">
+            <button class="btn btn-white" id="daily-btn" type="button">Start challenge</button>
+            <span class="daily-timer" id="daily-timer"></span>
+          </div>
+        </div>
+        <div class="daily-art" data-mascot="wow" aria-hidden="true"></div>
+      </article>
+
+      <section>
+        <h2 class="section-title">Practice</h2>
+        <div class="modes">
+          <button class="mode-card" type="button" data-mode="quick" style="--c: var(--green); --cd: var(--green-dark)">
+            <span class="mode-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M13.5 2 4 13.5h6.5L9.5 22 20 9.8h-6.6z"/></svg></span>
+            <span class="mode-title">Quick</span>
+            <span class="mode-meta">10 questions · ~3 min</span>
+          </button>
+          <button class="mode-card" type="button" data-mode="standard" style="--c: var(--blue); --cd: var(--blue-dark)">
+            <span class="mode-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor"/></svg></span>
+            <span class="mode-title">Standard</span>
+            <span class="mode-meta">20 questions · ~7 min</span>
+          </button>
+          <button class="mode-card" type="button" data-mode="marathon" style="--c: var(--purple); --cd: var(--purple-dark)">
+            <span class="mode-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M2.5 20 9 8.5l3.6 6.2 2.2-3.6L21.5 20z"/><circle cx="17.5" cy="5.5" r="2"/></svg></span>
+            <span class="mode-title">Marathon</span>
+            <span class="mode-meta">50 questions · ~18 min</span>
+          </button>
+          <button class="mode-card" type="button" data-mode="custom" style="--c: var(--orange); --cd: var(--orange-dark)">
+            <span class="mode-icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+            <span class="mode-title">Custom</span>
+            <span class="mode-meta">Pick topics &amp; length</span>
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Your stats</h2>
+        <div class="stats" id="stats"></div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2 class="section-title">Topics</h2>
+          <span class="section-hint">Tap a topic for a 10-question drill</span>
+        </div>
+        <div class="topics" id="topics"></div>
+      </section>
+
+      <footer class="home-footer">
+        <span id="sync-status"></span>
+        <span>Content aligned with the IB Diploma Computer Science guide (first assessment 2027).</span>
+      </footer>
+    </main>
+  </section>
+
+  <!-- Custom mode -->
+  <section id="screen-custom" class="screen" aria-label="Custom practice">
+    <header class="subbar">
+      <button class="icon-btn" id="custom-back" type="button" aria-label="Back">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <h1>Custom practice</h1>
+      <span class="subbar-spacer"></span>
+    </header>
+    <main class="custom">
+      <div class="custom-section">
+        <h2 class="section-title">Topics</h2>
+        <div id="custom-units"></div>
+      </div>
+      <div class="custom-section">
+        <h2 class="section-title">Number of questions</h2>
+        <div class="count-chips" id="count-chips"></div>
+        <p class="custom-note" id="custom-note"></p>
+      </div>
+    </main>
+    <footer class="custom-footer">
+      <button class="btn btn-green btn-wide" id="custom-start" type="button">Start practice</button>
+    </footer>
+  </section>
+
+  <!-- Lesson -->
+  <section id="screen-lesson" class="screen" aria-label="Lesson">
+    <div class="lesson-top">
+      <button class="icon-btn" id="quit-btn" type="button" aria-label="Quit lesson">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <div class="progress" role="progressbar" aria-label="Lesson progress" aria-valuemin="0" aria-valuemax="100" id="progress">
+        <div class="progress-fill" id="progress-fill"></div>
+        <span class="combo-tag" id="combo-tag"></span>
+      </div>
+      <div class="progress-count" id="progress-count">0/0</div>
+    </div>
+
+    <main class="lesson-main" id="lesson-main">
+      <div class="q-head">
+        <span class="q-kind" id="q-kind"></span>
+        <span class="q-topic" id="q-topic"></span>
+      </div>
+      <h2 class="q-text" id="q-text"></h2>
+      <pre class="q-code" id="q-code" hidden></pre>
+      <div class="q-body" id="q-body"></div>
+    </main>
+
+    <footer class="lesson-footer" id="lesson-footer">
+      <div class="lesson-footer-inner">
+        <div class="feedback" id="feedback" aria-live="polite">
+          <div class="fb-badge" id="fb-badge"></div>
+          <div class="fb-text">
+            <h3 class="fb-title" id="fb-title"></h3>
+            <p class="fb-answer" id="fb-answer"></p>
+            <p class="fb-explain" id="fb-explain"></p>
+          </div>
+        </div>
+        <div class="footer-actions">
+          <button class="btn btn-ghost" id="skip-btn" type="button">Skip</button>
+          <button class="btn btn-green" id="check-btn" type="button" disabled>Check</button>
+        </div>
+      </div>
+    </footer>
+  </section>
+
+  <!-- Results -->
+  <section id="screen-results" class="screen" aria-label="Results">
+    <main class="results">
+      <div class="results-mascot" id="results-mascot"></div>
+      <h1 class="results-title" id="results-title">Lesson complete!</h1>
+      <p class="results-sub" id="results-sub"></p>
+      <div class="res-cards">
+        <div class="res-card" style="--c: var(--gold); --cd: var(--gold-dark)">
+          <div class="res-label">Total XP</div>
+          <div class="res-value" id="res-xp">0</div>
+        </div>
+        <div class="res-card" style="--c: var(--green); --cd: var(--green-dark)">
+          <div class="res-label">Accuracy</div>
+          <div class="res-value" id="res-acc">0%</div>
+        </div>
+        <div class="res-card" style="--c: var(--blue); --cd: var(--blue-dark)">
+          <div class="res-label">Time</div>
+          <div class="res-value" id="res-time">0:00</div>
+        </div>
+      </div>
+      <details class="mistakes" id="res-mistakes">
+        <summary id="res-mistakes-summary">Review mistakes</summary>
+        <ol id="res-mistakes-list"></ol>
+      </details>
+    </main>
+    <footer class="results-footer">
+      <button class="btn btn-ghost" id="res-review" type="button">Practice mistakes</button>
+      <button class="btn btn-green" id="res-continue" type="button">Continue</button>
+    </footer>
+  </section>
+
+  <!-- Streak celebration -->
+  <section id="screen-streak" class="screen" aria-label="Streak">
+    <main class="streak-main">
+      <div class="streak-big">
+        <svg class="flame flame-xl" viewBox="0 0 24 24" aria-hidden="true"><path class="flame-outer" d="M12.6 1.8c.4 2.9-1.1 4.9-2.7 6.7C8 10.6 6.2 12.6 6.2 15.6a5.8 5.8 0 0 0 11.6 0c0-2.3-1-4.3-2.4-5.9-.2 1.3-.9 2.4-2 3 .5-3.6-.1-7.3-.8-10.9z"/><path class="flame-inner" d="M12.2 12.4c-.3 1.5-1.8 2.4-1.8 4.1a2.3 2.3 0 0 0 4.6 0c0-1.5-1.1-2.6-2.8-4.1z"/></svg>
+        <div class="streak-number" id="streak-number">1</div>
+        <div class="streak-label">day streak!</div>
+      </div>
+      <div class="week" id="streak-week"></div>
+      <p class="streak-msg" id="streak-msg">Practice every day to build your streak.</p>
+    </main>
+    <footer class="results-footer">
+      <button class="btn btn-green btn-wide" id="streak-continue" type="button">Continue</button>
+    </footer>
+  </section>
+
+  <!-- Settings -->
+  <dialog class="sheet" id="settings" aria-labelledby="settings-title">
+    <form method="dialog" class="sheet-head">
+      <h2 id="settings-title">Settings</h2>
+      <button class="icon-btn" value="close" aria-label="Close settings">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </form>
+    <div class="sheet-body">
+      <section class="set-group">
+        <h3>Profile</h3>
+        <div class="profile-edit">
+          <span class="avatar avatar-xl" id="set-avatar"></span>
+          <div class="profile-fields">
+            <label class="field-label" for="set-name">Name</label>
+            <input class="input" id="set-name" type="text" maxlength="24" autocomplete="nickname" placeholder="Your name">
+          </div>
+        </div>
+        <div class="field-label">Profile picture</div>
+        <div class="avatar-grid" id="avatar-grid"></div>
+        <div class="photo-actions">
+          <label class="btn btn-ghost btn-sm" for="set-upload">Upload photo</label>
+          <input id="set-upload" type="file" accept="image/*" hidden>
+          <button class="btn btn-ghost btn-sm" id="set-google-photo" type="button" hidden>Use Google photo</button>
+        </div>
+      </section>
+
+      <section class="set-group">
+        <h3>Appearance</h3>
+        <div class="seg" id="set-theme" role="radiogroup" aria-label="Theme">
+          <button type="button" data-value="light" role="radio">Light</button>
+          <button type="button" data-value="dark" role="radio">Dark</button>
+          <button type="button" data-value="system" role="radio">System</button>
+        </div>
+      </section>
+
+      <section class="set-group">
+        <h3>Course level</h3>
+        <div class="seg" id="set-level" role="radiogroup" aria-label="Course level">
+          <button type="button" data-value="SL" role="radio">SL</button>
+          <button type="button" data-value="HL" role="radio">HL</button>
+        </div>
+        <p class="set-hint">SL hides HL-only content (A3.3 views &amp; transactions, A3.4).</p>
+      </section>
+
+      <section class="set-group">
+        <div class="set-row">
+          <div><h3>Sound effects</h3><p class="set-hint">Dings, buzzes and fanfares.</p></div>
+          <label class="switch"><input type="checkbox" id="set-sound"><span class="slider"></span></label>
+        </div>
+      </section>
+
+      <section class="set-group">
+        <h3>Account</h3>
+        <p class="set-hint" id="set-account-text"></p>
+        <div class="photo-actions">
+          <button class="btn btn-google btn-sm" id="set-signin" type="button">Sign in with Google</button>
+          <button class="btn btn-ghost btn-sm" id="set-signout" type="button">Sign out</button>
+          <button class="btn btn-danger btn-sm" id="set-reset" type="button">Reset progress</button>
+        </div>
+      </section>
+    </div>
+  </dialog>
+
+  <!-- Quit confirmation -->
+  <dialog class="sheet sheet-sm" id="quit-dialog" aria-labelledby="quit-title">
+    <div class="sheet-body center">
+      <div class="quit-mascot" data-mascot="sad"></div>
+      <h2 id="quit-title">Wait, don't go!</h2>
+      <p class="set-hint">You'll lose your progress in this lesson if you quit now.</p>
+      <div class="stack">
+        <button class="btn btn-blue btn-wide" id="quit-stay" type="button">Keep learning</button>
+        <button class="btn btn-text" id="quit-leave" type="button">End session</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+  <script src="js/bank.js"></script>
+  <script src="js/questions/a1.js"></script>
+  <script src="js/questions/a2.js"></script>
+  <script src="js/questions/a3.js"></script>
+  <script src="js/questions/b1.js"></script>
+  <script src="js/questions/b2.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
