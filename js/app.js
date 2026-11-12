@@ -1,7 +1,16 @@
 import { firebaseConfig } from './config.js';
 
-const { UNITS, TOPICS, questions: BANK } = window.DAY1_BANK;
+const { UNITS, TOPICS, MODULES, questions: BANK } = window.DAY1_BANK;
 const TOPIC = Object.fromEntries(TOPICS.map((t) => [t.id, t]));
+const MODULE = Object.fromEntries(MODULES.map((m) => [m.id, m]));
+const SECTION = Object.fromEntries(MODULES.flatMap((m) => m.sections.map((s) => [s.id, { ...s, module: m }])));
+
+// Label shown above each question: syllabus topic, or module section for extra modules.
+function topicLabel(q) {
+  if (TOPIC[q.topic]) return `${q.topic} · ${TOPIC[q.topic].name}`;
+  const s = SECTION[q.topic];
+  return s ? `${s.module.title} · ${s.name}` : q.topic;
+}
 
 /* ==========================================================================
    Utilities
@@ -371,9 +380,12 @@ function poolFor(topicIds) {
   return BANK.filter((q) => set.has(q.topic) && (state.level === 'HL' || !q.hl));
 }
 
-// Spreads questions evenly across topics and prefers ones not seen recently.
 function pickQuestions(topicIds, count) {
-  const pool = poolFor(topicIds);
+  return pickFrom(poolFor(topicIds), topicIds, count);
+}
+
+// Spreads questions evenly across topics and prefers ones not seen recently.
+function pickFrom(pool, topicIds, count) {
   const recent = new Set(state.recent);
   const groups = shuffle(topicIds)
     .map((t) => {
@@ -439,6 +451,7 @@ function renderHome() {
       : 'Complete any lesson to start your streak.';
 
   renderDaily();
+  renderModules();
   renderStats();
   renderTopics();
 }
@@ -533,6 +546,92 @@ function renderTopics() {
 }
 
 /* ==========================================================================
+   Extra modules
+   ========================================================================== */
+const MODULE_MIX = 10;
+
+function sectionStats(ids) {
+  return ids.reduce((acc, id) => {
+    const st = state.stats[id] || { a: 0, c: 0 };
+    return { a: acc.a + st.a, c: acc.c + st.c };
+  }, { a: 0, c: 0 });
+}
+
+const moduleQuestions = (m) => m.sections.flatMap((s) => s.questions);
+
+function renderModules() {
+  const host = $('#modules');
+  host.innerHTML = '';
+  MODULES.forEach((m) => {
+    const total = moduleQuestions(m).length;
+    const st = sectionStats(m.sections.map((s) => s.id));
+    const pct = st.a ? Math.round((st.c / st.a) * 100) : 0;
+    const b = h('button', 'module-card', `
+      <span class="module-icon" aria-hidden="true">01</span>
+      <span class="module-info">
+        <span class="module-tag">${esc(m.tag)} · ${m.sections.length} sections · ${total} questions</span>
+        <span class="module-name">${esc(m.title)}</span>
+        <span class="bar"><span style="width:${pct}%"></span></span>
+      </span>
+      <span class="topic-pct">${st.a ? pct + '%' : 'New'}</span>`);
+    b.type = 'button';
+    b.addEventListener('click', () => openModule(m.id));
+    host.append(b);
+  });
+}
+
+let openModuleId = null;
+
+function openModule(id) {
+  openModuleId = id;
+  renderModule();
+  show('screen-module');
+}
+
+function renderModule() {
+  const m = MODULE[openModuleId];
+  const all = moduleQuestions(m);
+  $('#module-title').textContent = m.title;
+  $('#module-tag').textContent = `Extra module · ${m.tag}`;
+  $('#module-name').textContent = m.title;
+  $('#module-desc').textContent = m.description;
+  $('#module-all').textContent = `Full module (${all.length})`;
+  $('#module-mix').textContent = `Quick mix (${Math.min(MODULE_MIX, all.length)})`;
+
+  const host = $('#module-sections');
+  host.innerHTML = '';
+  m.sections.forEach((s, i) => {
+    const st = sectionStats([s.id]);
+    const pct = st.a ? Math.round((st.c / st.a) * 100) : 0;
+    const b = h('button', 'topic-row', `
+      <span class="topic-code">${i + 1}</span>
+      <span class="topic-info">
+        <span class="topic-name">${esc(s.name)}</span>
+        <span class="bar"><span style="width:${pct}%"></span></span>
+      </span>
+      <span class="topic-pct">${st.a ? pct + '%' : s.questions.length + ' Qs'}</span>`);
+    b.type = 'button';
+    b.title = st.a ? `${st.c} of ${st.a} answered correctly` : `${s.questions.length} questions`;
+    b.addEventListener('click', () => startLesson({
+      mode: 'module', title: `${m.title} · ${s.name}`, questions: shuffle(s.questions), returnTo: 'module',
+    }));
+    host.append(b);
+  });
+}
+
+function startModule(count) {
+  const m = MODULE[openModuleId];
+  const ids = m.sections.map((s) => s.id);
+  const all = moduleQuestions(m);
+  startLesson({
+    mode: 'module',
+    title: count ? `${m.title} · Quick mix` : `${m.title} · Full module`,
+    questions: count ? pickFrom(all, ids, count) : shuffle(all),
+    returnTo: 'module',
+  });
+}
+
+/* ==========================================================================
    Custom mode
    ========================================================================== */
 const COUNT_OPTIONS = [5, 10, 15, 20, 30, 50];
@@ -619,6 +718,7 @@ const KIND = {
   fill: 'Complete the sentence',
   match: 'Tap the matching pairs',
   order: 'Put these in the correct order',
+  input: 'Type your answer',
 };
 const PRAISE = ['Nice!', 'Great job!', 'Correct!', 'Excellent!', 'You got it!', 'Brilliant!', 'Spot on!'];
 const XP_PER_CORRECT = 10;
@@ -649,13 +749,13 @@ function prepare(q) {
   return item;
 }
 
-function startLesson({ mode, title, questions }) {
+function startLesson({ mode, title, questions, returnTo = 'home' }) {
   if (!questions.length) {
     toast('No questions available for that selection.');
     return;
   }
   lesson = {
-    mode, title,
+    mode, title, returnTo,
     items: questions.map(prepare),
     index: 0, correct: 0, xp: 0, combo: 0,
     mistakes: [],
@@ -698,12 +798,11 @@ function renderQuestion() {
   phase = 'answer';
   const item = current();
   const q = item.q;
-  const t = TOPIC[q.topic];
   updateProgress();
   resetFooter();
 
   $('#q-kind').textContent = KIND[q.type];
-  $('#q-topic').textContent = `${q.topic} · ${t.name}${q.hl ? ' · HL' : ''}`;
+  $('#q-topic').textContent = topicLabel(q) + (q.hl ? ' · HL' : '');
   const code = $('#q-code');
   code.hidden = !q.code;
   code.textContent = q.code || '';
@@ -715,6 +814,7 @@ function renderQuestion() {
   if (q.type === 'mc' || q.type === 'tf') renderChoices(item, body);
   if (q.type === 'match') renderMatch(item, body);
   if (q.type === 'order') renderOrder(item, body);
+  if (q.type === 'input') renderInput(item, body);
 
   const main = $('#lesson-main');
   main.classList.remove('enter');
@@ -872,8 +972,38 @@ function renderOrder(item, body) {
   refresh();
 }
 
+function renderInput(item, body) {
+  const q = item.q;
+  item.text = '';
+  const row = h('div', 'input-row', `
+    <input class="answer-input" id="answer-input" type="text" autocomplete="off" autocapitalize="off"
+      spellcheck="false" placeholder="Type your answer" aria-label="Your answer"${q.numeric ? ' inputmode="decimal"' : ''}>
+    ${q.unit ? `<span class="answer-unit">${esc(q.unit)}</span>` : ''}`);
+  const field = row.querySelector('input');
+  field.addEventListener('input', () => {
+    item.text = field.value;
+    setCanCheck(field.value.trim() !== '');
+  });
+  body.append(row);
+  // Don't pop up the on-screen keyboard automatically on touch devices.
+  if (window.matchMedia && matchMedia('(pointer: fine)').matches) setTimeout(() => field.focus({ preventScroll: true }), 60);
+}
+
+// Typed answers ignore case, spaces, commas and apostrophes; numeric ones may allow a margin (tol).
+const normAnswer = (s) => String(s).toLowerCase().replace(/[\s,'′’]/g, '');
+
+function checkInput(q, text) {
+  const given = normAnswer(text);
+  if (q.accepted.some((a) => normAnswer(a) === given)) return true;
+  if (q.tol == null) return false;
+  const m = given.match(/^(\d+(?:\.\d+)?)([a-z]*)$/);
+  if (!m || (m[2] && (!q.unit || m[2] !== q.unit.toLowerCase()))) return false;
+  return q.accepted.some((a) => Math.abs(parseFloat(a) - parseFloat(m[1])) <= q.tol + 1e-9);
+}
+
 function evaluate(item) {
   const q = item.q;
+  if (q.type === 'input') return checkInput(q, item.text);
   if (q.type === 'mc' || q.type === 'tf') return item.sel != null && item.options[item.sel].correct;
   if (q.type === 'fill') return item.pick === q.answer;
   if (q.type === 'order') return item.placed.length === q.items.length && item.placed.every((p, i) => p.id === i);
@@ -889,6 +1019,7 @@ function answerHTML(q) {
   }
   if (q.type === 'order') return q.items.map((t, i) => `${i + 1}. ${fmt(t)}`).join('<br>');
   if (q.type === 'match') return q.pairs.map(([a, b]) => `${fmt(a)} → ${fmt(b)}`).join('<br>');
+  if (q.type === 'input') return fmt(q.accepted[0]) + (q.unit ? ` ${esc(q.unit)}` : '');
   return '';
 }
 
@@ -914,6 +1045,10 @@ function revealAnswer(item, ok) {
     $$('#q-body .order-bank .tile').forEach((t) => (t.disabled = true));
   } else if (q.type === 'match') {
     $$('#q-body .tile').forEach((t) => (t.disabled = true));
+  } else if (q.type === 'input') {
+    const field = $('#answer-input');
+    field.disabled = true;
+    if (field.value.trim()) field.classList.add(ok ? 'correct' : 'wrong');
   }
 }
 
@@ -1045,6 +1180,12 @@ function showStreak() {
 
 function askQuit() {
   $('#quit-dialog').showModal();
+}
+
+// After a lesson, go back to where it was started from (home or a module page).
+function leaveLesson() {
+  if (lesson && lesson.returnTo === 'module' && MODULE[openModuleId]) openModule(openModuleId);
+  else goHome();
 }
 
 /* ==========================================================================
@@ -1258,9 +1399,9 @@ function wire() {
   $('#quit-stay').addEventListener('click', () => $('#quit-dialog').close());
   $('#quit-leave').addEventListener('click', () => {
     $('#quit-dialog').close();
-    lesson = null;
     save();
-    goHome();
+    leaveLesson();
+    lesson = null;
   });
 
   $('#res-continue').addEventListener('click', () => {
@@ -1268,14 +1409,18 @@ function wire() {
       pendingStreak = false;
       showStreak();
     } else {
-      goHome();
+      leaveLesson();
     }
   });
   $('#res-review').addEventListener('click', () => {
     const qs = shuffle(lesson.mistakes);
-    startLesson({ mode: 'review', title: 'Mistakes review', questions: qs });
+    startLesson({ mode: 'review', title: 'Mistakes review', questions: qs, returnTo: lesson.returnTo });
   });
-  $('#streak-continue').addEventListener('click', goHome);
+  $('#streak-continue').addEventListener('click', leaveLesson);
+
+  $('#module-back').addEventListener('click', goHome);
+  $('#module-all').addEventListener('click', () => startModule(0));
+  $('#module-mix').addEventListener('click', () => startModule(MODULE_MIX));
 
   // Settings
   let nameTimer = null;

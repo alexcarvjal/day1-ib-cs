@@ -246,6 +246,62 @@ code, pre { font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace; }
 .daily-art { position: relative; z-index: 1; width: 150px; height: 150px; }
 .daily-card .btn-white:disabled { --b: rgba(255, 255, 255, .85); --bd: rgba(0, 0, 0, .15); --fg: #3a8d12; }
 
+/* Extra modules */
+.modules { display: grid; gap: 12px; }
+.module-card {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px;
+  padding: 16px 18px; text-align: left;
+  border: 2px solid var(--border); border-bottom-width: 5px; border-radius: 20px;
+  background: var(--surface); cursor: pointer;
+  transition: transform .07s ease, background-color .15s, border-color .15s;
+}
+.module-card:hover { background: var(--surface-2); border-color: var(--border-strong); }
+.module-card:active { transform: translateY(3px); }
+.module-icon {
+  width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; font-size: 19px; color: #fff;
+  background: linear-gradient(135deg, #2a9bb3, #7b5cd6); box-shadow: 0 4px 0 #4a3a96;
+}
+.module-info { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.module-tag { font-size: 12px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--kind); }
+.module-name { font-weight: 900; font-size: 19px; line-height: 1.2; }
+.module-hero {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1fr 150px; align-items: center; gap: 12px;
+  padding: 26px; border-radius: 24px; color: #fff;
+  background: linear-gradient(135deg, #2a9bb3 0%, #4f7ad2 50%, #7b5cd6 100%);
+  box-shadow: 0 6px 0 #4a3a96;
+}
+.module-hero::before {
+  content: ''; position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+}
+.module-hero-text { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; }
+.module-hero h2 { margin: 0; font-size: 26px; font-weight: 900; line-height: 1.15; }
+.module-hero p { margin: 0; font-weight: 700; opacity: .92; line-height: 1.4; }
+.module-hero .btn-white { --fg: #4a3a96; }
+.btn-outline-white { --b: transparent; --bd: rgba(0, 0, 0, .18); --fg: #fff; border: 2px solid rgba(255, 255, 255, .75); }
+.btn-outline-white:hover:not(:disabled) { --b: rgba(255, 255, 255, .12); filter: none; }
+.module-sections { display: grid; gap: 10px; }
+.module-sections .topic-code {
+  width: 32px; height: 32px; min-width: 0; border-radius: 50%; display: grid; place-items: center;
+  color: #fff; background: linear-gradient(135deg, #2a9bb3, #7b5cd6);
+}
+
+/* Typed answer */
+.input-row { display: flex; align-items: center; gap: 12px; }
+.answer-input {
+  flex: 1; min-width: 0; padding: 16px 18px;
+  border: 2px solid var(--border); border-bottom-width: 4px; border-radius: 16px;
+  background: var(--surface-2); color: var(--text);
+  font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace; font-weight: 700; font-size: 20px; letter-spacing: .04em;
+}
+.answer-input::placeholder { font-family: 'Nunito', system-ui, sans-serif; letter-spacing: 0; font-weight: 700; color: var(--muted); }
+.answer-input:focus { outline: none; border-color: var(--blue); background: var(--surface); }
+.answer-input.correct { border-color: var(--green); background: var(--green-soft); color: var(--green-text); }
+.answer-input.wrong { border-color: var(--red); background: var(--red-soft); color: var(--red-text); }
+.answer-unit { font-weight: 900; font-size: 18px; color: var(--muted); }
+
 .modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 .mode-card {
   display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
@@ -632,6 +688,13 @@ dialog.sheet::backdrop { background: rgba(5, 12, 30, .55); }
   .daily-art { position: absolute; right: -14px; top: 10px; width: 96px; height: 96px; opacity: .95; }
   .daily-text { padding-right: 70px; }
   .daily-card h2 { font-size: 22px; }
+  .module-hero { grid-template-columns: 1fr; padding: 22px; }
+  .module-hero .daily-art { position: absolute; right: -14px; top: 10px; width: 96px; height: 96px; }
+  .module-hero-text { padding-right: 70px; }
+  .module-hero h2 { font-size: 22px; }
+  .module-card { gap: 12px; padding: 14px; }
+  .module-icon { width: 46px; height: 46px; font-size: 16px; }
+  .module-name { font-size: 17px; }
   .lesson-top { padding: 14px 16px 4px; gap: 10px; }
   .lesson-main { padding: 20px 16px 24px; }
   .q-text { font-size: 20px; }

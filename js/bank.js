@@ -6,8 +6,14 @@
 //   fill(sub, 'Text with ___ blank', answer, [distractors], explanation, extra)
 //   match(sub, prompt, [[term, definition], ...], explanation, extra)
 //   order(sub, prompt, [items in the correct order], explanation, extra)
+//   input(sub, prompt, [accepted answers], explanation, extra)   — typed answer
 //
 // `extra` is optional: { code: 'snippet', hl: true }. Use the HL constant for HL-only content.
+// Typed answers also accept { unit: 'KiB', tol: 1, numeric: true } (tol = accepted numeric margin).
+//
+// Extra modules live apart from the main bank (they never appear in the daily challenge or the
+// practice modes). Register one with addModule({ id, title, tag, description, sections: [...] }),
+// where each section is { id, name, questions: [...] }.
 (function () {
   const UNITS = [
     { id: 'A1', name: 'Computer Fundamentals' },
@@ -49,11 +55,27 @@
     });
   }
 
+  const MODULES = [];
+
+  function addModule(mod) {
+    mod.sections.forEach((s) => {
+      s.questions.forEach((q, i) => {
+        q.topic = s.id;
+        q.module = mod.id;
+        q.id = s.id + '#' + (i + 1);
+      });
+    });
+    MODULES.push(mod);
+  }
+
   const mc = (sub, q, options, explain, extra) => ({ type: 'mc', sub, q, options, explain, ...extra });
   const tf = (sub, q, answer, explain, extra) => ({ type: 'tf', sub, q, answer, explain, ...extra });
   const fill = (sub, q, answer, distractors, explain, extra) => ({ type: 'fill', sub, q, answer, distractors, explain, ...extra });
   const match = (sub, q, pairs, explain, extra) => ({ type: 'match', sub, q, pairs, explain, ...extra });
   const order = (sub, q, items, explain, extra) => ({ type: 'order', sub, q, items, explain, ...extra });
+  const input = (sub, q, accepted, explain, extra) => ({ type: 'input', sub, q, accepted, explain, ...extra });
 
-  window.DAY1_BANK = { UNITS, TOPICS, questions, add, mc, tf, fill, match, order, HL: { hl: true } };
+  window.DAY1_BANK = {
+    UNITS, TOPICS, MODULES, questions, add, addModule, mc, tf, fill, match, order, input, HL: { hl: true },
+  };
 })();

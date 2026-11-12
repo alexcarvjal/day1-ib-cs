@@ -124,6 +124,11 @@
       </section>
 
       <section>
+        <h2 class="section-title">Extra modules</h2>
+        <div class="modules" id="modules"></div>
+      </section>
+
+      <section>
         <h2 class="section-title">Your stats</h2>
         <div class="stats" id="stats"></div>
       </section>
@@ -166,6 +171,38 @@
     <footer class="custom-footer">
       <button class="btn btn-green btn-wide" id="custom-start" type="button">Start practice</button>
     </footer>
+  </section>
+
+  <!-- Extra module -->
+  <section id="screen-module" class="screen" aria-label="Module">
+    <header class="subbar">
+      <button class="icon-btn" id="module-back" type="button" aria-label="Back">
+        <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <h1 id="module-title">Module</h1>
+      <span class="subbar-spacer"></span>
+    </header>
+    <main class="custom">
+      <article class="module-hero">
+        <div class="module-hero-text">
+          <div class="eyebrow"><span id="module-tag">Extra module</span></div>
+          <h2 id="module-name"></h2>
+          <p id="module-desc"></p>
+          <div class="daily-actions">
+            <button class="btn btn-white" id="module-all" type="button">Full module</button>
+            <button class="btn btn-outline-white" id="module-mix" type="button">Quick mix</button>
+          </div>
+        </div>
+        <div class="daily-art" data-mascot="happy" aria-hidden="true"></div>
+      </article>
+      <section>
+        <div class="section-head">
+          <h2 class="section-title">Sections</h2>
+          <span class="section-hint">Tap a section to practise all of its questions</span>
+        </div>
+        <div class="module-sections" id="module-sections"></div>
+      </section>
+    </main>
   </section>
 
   <!-- Lesson -->
@@ -342,6 +379,7 @@
   <script src="js/questions/a3.js"></script>
   <script src="js/questions/b1.js"></script>
   <script src="js/questions/b2.js"></script>
+  <script src="js/modules/data-representation.js"></script>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
