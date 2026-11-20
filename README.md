@@ -36,6 +36,7 @@ Extra modules are practice sets kept separate from the main bank: they never app
 | Module | Sections | Questions |
 | --- | --- | --- |
 | Data Representation (Topic 1, based on the Kognity checkpoints) | Number systems · Text, sound and images · Data storage and compression | 47 |
+| Data Transmission (Topic 2, based on the Kognity checkpoints) | Transmission methods and USB · Encryption · Error detection | 34 |
 
 This module adds a **typed-answer** question type for conversions and file-size calculations. Answers ignore spaces and commas, and calculations accept a small rounding margin. Module files live in `js/modules/`; register a new one with `addModule()` from `js/bank.js`.
 

@@ -567,7 +567,7 @@ function renderModules() {
     const st = sectionStats(m.sections.map((s) => s.id));
     const pct = st.a ? Math.round((st.c / st.a) * 100) : 0;
     const b = h('button', 'module-card', `
-      <span class="module-icon" aria-hidden="true">01</span>
+      <span class="module-icon" aria-hidden="true">${m.tag.replace(/\D/g, '').padStart(2, '0')}</span>
       <span class="module-info">
         <span class="module-tag">${esc(m.tag)} · ${m.sections.length} sections · ${total} questions</span>
         <span class="module-name">${esc(m.title)}</span>
